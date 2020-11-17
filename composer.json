@@ -1,5 +1,5 @@
 {
-  "name": "ciltechuk/monolog-enricher",
+  "name": "ciltech-uk/newrelic-monolog-logenricher-php",
   "description": "Monolog components to enable New Relic Logs",
   "type": "library",
   "license": "Apache-2.0",
