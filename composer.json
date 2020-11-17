@@ -1,49 +1,47 @@
 {
-    "name": "newrelic/monolog-enricher",
-    "description": "Monolog components to enable New Relic Logs",
-    "type": "library",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "New Relic PHP",
-            "email": "php-agent@newrelic.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.0",
-        "monolog/monolog": "^1.24|^2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4",
-        "squizlabs/php_codesniffer": ">=3.5"
-    },
-    "suggest": {
-        "ext-newrelic": "Adds support for viewing logs in context within the New Relic UI"
-    },
-    "autoload": {
-        "exclude-from-classmap": ["/src/api1/", "/src/api2"],
-        "psr-4": {
-            "NewRelic\\Monolog\\Enricher\\": "src"
-        }
-    },
-    "scripts": {
-        "check": [
-            "@coding-standard-check",
-            "@test"
-        ],
-        "coding-standard-check": "phpcs -p",
-        "coding-standard-fix": "phpcbf",
-        "integration": [
-            "@composer install -d tests/integration/server",
-            "@composer install -d tests/integration/v1",
-            "@composer install -d tests/integration/v2",
-            "cd tests/integration/v1 && php -d error_reporting=24575 vendor/bin/phpunit",
-            "cd tests/integration/v2 && php -d error_reporting=24575 vendor/bin/phpunit"
-        ],
-        "test": "php -d error_reporting=24575 vendor/bin/phpunit",
-        "test-coverage": [
-            "rm -rf coverage",
-            "phpdbg -qrr -d error_reporting=24575 vendor/bin/phpunit --coverage-html=coverage"
-        ]
+  "name": "newrelic/monolog-enricher",
+  "description": "Monolog components to enable New Relic Logs",
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "New Relic PHP",
+      "email": "php-agent@newrelic.com"
     }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "ext-curl": "*",
+    "monolog/monolog": "^2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4",
+    "squizlabs/php_codesniffer": ">=3.5"
+  },
+  "suggest": {
+    "ext-newrelic": "Adds support for viewing logs in context within the New Relic UI"
+  },
+  "autoload": {
+    "psr-4": {
+      "NewRelic\\Monolog\\Enricher\\": "src"
+    }
+  },
+  "scripts": {
+    "check": [
+      "@coding-standard-check",
+      "@test"
+    ],
+    "coding-standard-check": "phpcs -p",
+    "coding-standard-fix": "phpcbf",
+    "integration": [
+      "@composer install -d tests/integration/server",
+      "@composer install -d tests/integration/v2",
+      "cd tests/integration/v2 && php -d error_reporting=24575 vendor/bin/phpunit"
+    ],
+    "test": "php -d error_reporting=24575 vendor/bin/phpunit",
+    "test-coverage": [
+      "rm -rf coverage",
+      "phpdbg -qrr -d error_reporting=24575 vendor/bin/phpunit --coverage-html=coverage"
+    ]
+  }
 }

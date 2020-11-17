@@ -21,15 +21,15 @@ use PHPUnit_Framework_TestCase;
  *
  * @return array
  */
-function newrelic_get_linking_metadata()
-{
-    return array('hostname' => 'example.host',
-                 'entity.name' => 'Processor Tests',
-                 'entity.type' => 'SERVICE');
+function newrelic_get_linking_metadata() {
+    return [
+        'hostname'    => 'example.host',
+        'entity.name' => 'Processor Tests',
+        'entity.type' => 'SERVICE'
+    ];
 }
 
-class ProcessorTest extends PHPUnit_Framework_TestCase
-{
+class ProcessorTest extends PHPUnit_Framework_TestCase {
     /**
      * getMockedProcessor returns a mocked NewRelic\Monolog\Enricher\Processor
      * that is configured to return a set value in
@@ -39,13 +39,12 @@ class ProcessorTest extends PHPUnit_Framework_TestCase
      * @param bool $nr_ext_compat Whether a compatible extension was 'found'
      * @return MockedProcessor
      */
-    private function getMockedProcessor($nr_ext_compat)
-    {
-        $proc = $this->getMockBuilder('NewRelic\Monolog\Enricher\Processor')
-                     ->setMethods(array('contextAvailable'))
-                     ->getMock();
+    private function getMockedProcessor($nr_ext_compat) {
+        $proc = $this->getMockBuilder(NewRelic\Monolog\Enricher\Processor::class)
+            ->setMethods(array('contextAvailable'))
+            ->getMock();
         $proc->method('contextAvailable')
-             ->willReturn($nr_ext_compat);
+            ->willReturn($nr_ext_compat);
 
         return $proc;
     }
@@ -55,8 +54,7 @@ class ProcessorTest extends PHPUnit_Framework_TestCase
      * is inserted at `$logRecord['extra']['newrelic-context'] when a
      * compatible New Relic extension is loaded
      */
-    public function testInvoke()
-    {
+    public function testInvoke() {
         $input = array('foo' => 'bar');
 
         $proc = $this->getMockedProcessor(true);
@@ -64,18 +62,17 @@ class ProcessorTest extends PHPUnit_Framework_TestCase
 
         $expected = newrelic_get_linking_metadata();
         $got = $enriched_record['extra']['newrelic-context'];
-        $this->assertSame($expected, $got);
+        self::assertSame($expected, $got);
     }
 
     /**
      * Tests that the given Monolog record is returned unchanged when a
      * compatible New Relic extension is not loaded
      */
-    public function testInputPassthroughWhenNewRelicNotLoaded()
-    {
+    public function testInputPassthroughWhenNewRelicNotLoaded() {
         $input = array('foo' => 'bar');
         $proc = $this->getMockedProcessor(false);
 
-        $this->assertSame($input, $proc($input));
+        self::assertSame($input, $proc($input));
     }
 }

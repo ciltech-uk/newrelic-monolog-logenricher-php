@@ -13,22 +13,18 @@
 namespace NewRelic\Monolog\Enricher;
 
 use Monolog\Formatter\NormalizerFormatter;
-use Monolog\Handler\MissingExtensionException;
-use Monolog\Logger;
 use PHPUnit_Framework_TestCase;
 
-class HandlerTest extends PHPUnit_Framework_TestCase
-{
-    public function testHandle()
-    {
+class HandlerTest extends PHPUnit_Framework_TestCase {
+    public function testHandle() {
         $record = array(
-            'message' => 'test',
-            'context' => array(),
-            'level' => 300,
+            'message'    => 'test',
+            'context'    => array(),
+            'level'      => 300,
             'level_name' => 'WARNING',
-            'channel' => 'test',
-            'extra' => array(),
-            'datetime' => new \DateTime("now", new \DateTimeZone("UTC")),
+            'channel'    => 'test',
+            'extra'      => array(),
+            'datetime'   => new \DateTime("now", new \DateTimeZone("UTC")),
         );
 
         $formatter = new Formatter(Formatter::BATCH_MODE_JSON, false);
@@ -38,16 +34,15 @@ class HandlerTest extends PHPUnit_Framework_TestCase
         $handler->handle($record);
     }
 
-    public function testHandleBatch()
-    {
+    public function testHandleBatch() {
         $record = array(
-            'message' => 'test',
-            'context' => array(),
-            'level' => 300,
+            'message'    => 'test',
+            'context'    => array(),
+            'level'      => 300,
             'level_name' => 'WARNING',
-            'channel' => 'test',
-            'extra' => array(),
-            'datetime' => new \DateTime("now", new \DateTimeZone("UTC")),
+            'channel'    => 'test',
+            'extra'      => array(),
+            'datetime'   => new \DateTime("now", new \DateTimeZone("UTC")),
         );
 
         $formatter = new Formatter(Formatter::BATCH_MODE_JSON, false);
@@ -57,30 +52,27 @@ class HandlerTest extends PHPUnit_Framework_TestCase
         $handler->handleBatch(array($record));
     }
 
-    public function testSetFormatter()
-    {
+    public function testSetFormatter() {
         $handler = new Handler();
         $formatter = new Formatter();
         $handler->setFormatter($formatter);
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             'NewRelic\Monolog\Enricher\Formatter',
             $handler->getFormatter()
         );
     }
 
-    public function testDefaultFormatterConfig()
-    {
+    public function testDefaultFormatterConfig() {
         $handler = new Handler();
         $formatter = $handler->getFormatter();
-        $this->assertEquals(
+        self::assertEquals(
             Formatter::BATCH_MODE_JSON,
             $formatter->getBatchMode()
         );
-        $this->assertEquals(false, $formatter->isAppendingNewlines());
+        self::assertEquals(false, $formatter->isAppendingNewlines());
     }
 
-    public function testSetFormatterInvalid()
-    {
+    public function testSetFormatterInvalid() {
         $handler = new Handler();
         $formatter = new NormalizerFormatter();
 
@@ -93,20 +85,18 @@ class HandlerTest extends PHPUnit_Framework_TestCase
         $handler->setFormatter($formatter);
     }
 
-    public function testMissingCurlExtension()
-    {
+    public function testMissingCurlExtension() {
         $this->setExpectedException(
             'Monolog\Handler\MissingExtensionException',
             'The curl extension is required to use this Handler'
         );
-        
+
         $GLOBALS['extension_loaded'] = false;
         $handler = new Handler();
         $GLOBALS['extension_loaded'] = true;
     }
 
-    public function testCurlHandlerExplicitHost()
-    {
+    public function testCurlHandlerExplicitHost() {
         $handler = new StubHandler();
         $handler->setHost('foo.bar');
 
@@ -115,16 +105,15 @@ class HandlerTest extends PHPUnit_Framework_TestCase
         $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         $parts = parse_url($url);
 
-        $this->assertSame('https', $parts['scheme']);
-        $this->assertSame('foo.bar', $parts['host']);
-        $this->assertSame($handler->getEndpoint(), substr($parts['path'], 1));
+        self::assertSame('https', $parts['scheme']);
+        self::assertSame('foo.bar', $parts['host']);
+        self::assertSame($handler->getEndpoint(), substr($parts['path'], 1));
     }
 
     /**
      * @dataProvider defaultHostProvider
      */
-    public function testCurlHandlerDefault($key, $expected)
-    {
+    public function testCurlHandlerDefault($key, $expected) {
         $handler = new StubHandler();
         $handler->setLicenseKey($key);
 
@@ -133,16 +122,15 @@ class HandlerTest extends PHPUnit_Framework_TestCase
         $url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         $parts = parse_url($url);
 
-        $this->assertSame('https', $parts['scheme']);
-        $this->assertSame($expected, $parts['host']);
-        $this->assertSame($handler->getEndpoint(), substr($parts['path'], 1));
+        self::assertSame('https', $parts['scheme']);
+        self::assertSame($expected, $parts['host']);
+        self::assertSame($handler->getEndpoint(), substr($parts['path'], 1));
     }
 
     /**
      * @dataProvider defaultHostExceptionProvider
      */
-    public function testCurlHandlerDefaultException($key, $expectedException)
-    {
+    public function testCurlHandlerDefaultException($key, $expectedException) {
         $this->setExpectedException($expectedException);
 
         $handler = new StubHandler();
@@ -153,66 +141,63 @@ class HandlerTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider defaultHostProvider
      */
-    public function testDefaultHost($key, $expected)
-    {
-        $this->assertSame($expected, StubHandler::getDefaultHost($key));
+    public function testDefaultHost($key, $expected) {
+        self::assertSame($expected, StubHandler::getDefaultHost($key));
     }
 
     /**
      * @dataProvider defaultHostExceptionProvider
      */
-    public function testDefaultHostException($key, $expectedException)
-    {
+    public function testDefaultHostException($key, $expectedException) {
         $this->setExpectedException($expectedException);
         StubHandler::getDefaultHost($key);
     }
 
-    public function defaultHostProvider()
-    {
-        return array(
-            'normal eu key' => array(
+    public function defaultHostProvider() {
+        return [
+            'normal eu key'                                  => [
                 'eu01xx0000000000000000000000000000000000',
                 'log-api.eu.newrelic.com',
-            ),
-            'normal us key' => array(
+            ],
+            'normal us key'                                  => [
                 '0000000000000000000000000000000000000000',
                 'log-api.newrelic.com',
-            ),
-            'malformed key without a region identifier' => array(
+            ],
+            'malformed key without a region identifier'      => [
                 'x000000000000000000000000000000000000000',
                 'log-api.newrelic.com',
-            ),
-            'key with a region identifier that is too long' => array(
+            ],
+            'key with a region identifier that is too long'  => [
                 'abcd00x000000000000000000000000000000000',
                 'log-api.newrelic.com',
-            ),
-            'key with a region identifier that is too short' => array(
+            ],
+            'key with a region identifier that is too short' => [
                 'a00x000000000000000000000000000000000000',
                 'log-api.newrelic.com',
-            ),
-            'empty key' => array(
+            ],
+            'empty key'                                      => [
                 '',
                 'log-api.newrelic.com',
-            ),
-        );
+            ],
+        ];
     }
 
-    public function defaultHostExceptionProvider()
-    {
-        return array(
-            'non-string key' => array(
-                array(),
+    public function defaultHostExceptionProvider() {
+        return [
+            'non-string key' => [
+                [],
                 'InvalidArgumentException',
-            ),
-            'null key' => array(
+            ],
+            'null key'       => [
                 null,
                 'InvalidArgumentException',
-            ),
-        );
+            ],
+        ];
     }
 }
 
 // phpcs:disable
+
 /**
  * Stubhandler overrides the methods of Handler that normally call
  * curl_exec, and instead outputs the data they receive.
@@ -221,28 +206,23 @@ class HandlerTest extends PHPUnit_Framework_TestCase
  * easier testing.
  */
 class StubHandler extends Handler {
-    protected function send($data)
-    {
+    protected function send(string $data) {
         print($data);
     }
 
-    protected function sendBatch($data)
-    {
+    protected function sendBatch($data) {
         print($data);
     }
 
-    public function getCurlHandler()
-    {
+    public function getCurlHandler() {
         return parent::getCurlHandler();
     }
 
-    public function getEndpoint()
-    {
+    public function getEndpoint() {
         return $this->endpoint;
     }
 
-    static public function getDefaultHost($licenseKey)
-    {
+    static public function getDefaultHost(string $licenseKey): string {
         return parent::getDefaultHost($licenseKey);
     }
 }
@@ -251,8 +231,7 @@ class StubHandler extends Handler {
  * Mocks global function extension_loaded to return the value
  * of global variable $extension_loaded
  */
-function extension_loaded($extension)
-{
+function extension_loaded($extension) {
     return $GLOBALS['extension_loaded'];
 }
 
